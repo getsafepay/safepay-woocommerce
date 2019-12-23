@@ -32,8 +32,11 @@ function woocommerce_safepay_init()
 
         const WC_ORDER_ID                 = "woocommerce_order_id";
 
-        const PRODUCTION_CHECKOUT_URL = "https://www.getsafepay.com/components";
-        const SANDBOX_CHECKOUT_URL = "https://sandbox.api.getsafepay.com/components";
+        const SANDBOX                     = "sandbox"
+        const PRODUCTION                  = "production"
+
+        const PRODUCTION_CHECKOUT_URL     = "https://www.getsafepay.com/components";
+        const SANDBOX_CHECKOUT_URL        = "https://sandbox.api.getsafepay.com/components";
 
         const DEFAULT_UNSUPPORTED_MESSAGE = "Safepay currently does not support your store currency. Please choose from either USD ($) or PKR (Rs)";
         const DEFAULT_LABEL               = "Pay with your credit or debit card";
@@ -111,7 +114,7 @@ function woocommerce_safepay_init()
 
             $this->init_form_fields();
             $this->init_settings();
-            //$this->init_hooks();       
+            $this->init_hooks();       
             $this->title          = $this->get_option('title');
             $this->description    = $this->get_option('description');
             $this->enabled        = $this->get_option('enabled');
@@ -125,7 +128,7 @@ function woocommerce_safepay_init()
             //add_action('init', array($this, 'check_safepay_response'));
             add_action('woocommerce_receipt_' . $this->id, array($this, 'action_safepay_receipt_id'));
 
-            add_action('woocommerce_api_' . $this->id, array($this, 'action_safepay_api_request'));
+            add_action('woocommerce_api_' . $this->id, array($this, 'check_safepay_response'));
         }
 
         protected function init_admin_options()
@@ -184,14 +187,30 @@ function woocommerce_safepay_init()
                     'required'    => true
                 ),
                 'production_webhook_secret' => array(
-                    'title'       => __( 'Webhook Shared Secret', $this->id),
+                    'title'       => __( 'Production Shared Secret', $this->id),
                     'type'        => 'text',
-                    'description' => __('Webhook secret is used for webhook signature verification.', $this->id)
+                    'description' => 
+                    // translators: Instructions for setting up 'webhook shared secrets' on settings page.
+                    __( 'Using webhook secret keys allows Safepay to verify each payment. To get your live webhook key:', $this->id )
+                    . '<br /><br />' .
+                    // translators: Step 1 of the instructions for 'webhook shared secrets' on settings page.
+                    __( '1. Navigate to your Live Safepay dashboard by clicking <a href="https://getsafepay.com/dashboard/api-settings">here</a>', $this->id )
+                    . '<br />' .
+                    // translators: Step 2 of the instructions for 'webhook shared secrets' on settings page. Includes webhook URL.
+                    __( '2. Activate your Developer settings, copy the webhook secret key and paste into the box above.', $this->id ),
                 ),
                 'sandbox_webhook_secret' => array(
-                    'title'       => __( 'Webhook Shared Secret', $this->id),
+                    'title'       => __( 'Sandbox Shared Secret', $this->id),
                     'type'        => 'text',
-                    'description' => __('Webhook secret is used for webhook signature verification.', $this->id)
+                    'description' => 
+                    // translators: Instructions for setting up 'webhook shared secrets' on settings page.
+                    __( 'Using webhook secret keys allows Safepay to verify each payment. To get your sandbox webhook key:', $this->id )
+                    . '<br /><br />' .
+                    // translators: Step 1 of the instructions for 'webhook shared secrets' on settings page.
+                    __( '1. Navigate to your Sandbox Safepay dashboard by clicking <a href="https://sandbox.api.getsafepay.com/dashboard/api-settings">here</a>', $this->id )
+                    . '<br />' .
+                    // translators: Step 2 of the instructions for 'webhook shared secrets' on settings page. Includes webhook URL.
+                    __( '2. Activate your Developer settings, copy the webhook secret key and paste into the box above.', $this->id ),
                 ),
                 'order_success_message' => array(
                     'title'         => __('Order Completion Message', $this->id),
@@ -211,7 +230,8 @@ function woocommerce_safepay_init()
             }
         }
 
-        public function is_valid_for_use() {
+        public function is_valid_for_use() 
+        {
             return in_array(
                 get_woocommerce_currency(),
                 apply_filters(
@@ -247,10 +267,10 @@ function woocommerce_safepay_init()
         public function process_payment( $order_id )
         {   
             $order = wc_get_order($order_id);
-            
+            $env = $this->get_environment();
             $this->init_api();
             $result = Safepay_API_Handler::create_charge(
-                $order->get_total(), get_woocommerce_currency(), "sandbox"
+                $order->get_total(), get_woocommerce_currency(), $env
             );
 
             if (!$result[0]) {
@@ -291,6 +311,11 @@ function woocommerce_safepay_init()
         private function get_redirect_url()
         {
             return get_site_url() . '/wc-api/' . $this->id;
+        }
+
+        protected function get_environment()
+        {
+            return $this->sandbox ? self::SANDBOX : self::PRODUCTION;
         }
 
         protected function construct_url($order, $tracker="")
@@ -347,6 +372,7 @@ function woocommerce_safepay_init()
             }
 
             $this->update_order($order, $success, $error, $reference_code);
+            $this->redirect_user($order);
         }
 
         protected function redirect_user($order)

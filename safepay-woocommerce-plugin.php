@@ -14,7 +14,6 @@ if ( ! defined( 'ABSPATH' ) )
     exit; // Exit if accessed directly
 }
 
-//require_once __DIR__.'/includes/safepay-webhooks.php';
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 add_action('plugins_loaded', 'woocommerce_safepay_init', 0);

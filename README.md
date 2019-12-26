@@ -1,4 +1,4 @@
-<p align="center"><a href="https://getsafepay.com/"><img src="https://raw.githubusercontent.com/getsafepay/safepay-woocommerce/master/images/logo.png" alt="Safepay For Woocommerce"></a></p>
+<p align="center"><a href="https://getsafepay.com/"><img src="./images/logo.png" alt="Safepay For Woocommerce"></a></p>
 
 # Safepay for Woocommerce
 

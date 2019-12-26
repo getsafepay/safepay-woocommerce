@@ -31,8 +31,8 @@ function woocommerce_safepay_init()
 
         const WC_ORDER_ID                 = "woocommerce_order_id";
 
-        const SANDBOX                     = "sandbox"
-        const PRODUCTION                  = "production"
+        const SANDBOX                     = "sandbox";
+        const PRODUCTION                  = "production";
 
         const PRODUCTION_CHECKOUT_URL     = "https://www.getsafepay.com/components";
         const SANDBOX_CHECKOUT_URL        = "https://sandbox.api.getsafepay.com/components";
@@ -124,7 +124,7 @@ function woocommerce_safepay_init()
 
         protected function init_hooks()
         {
-            //add_action('init', array($this, 'check_safepay_response'));
+            add_action('init', array($this, 'check_safepay_response'));
             add_action('woocommerce_receipt_' . $this->id, array($this, 'action_safepay_receipt_id'));
 
             add_action('woocommerce_api_' . $this->id, array($this, 'check_safepay_response'));
@@ -325,8 +325,8 @@ function woocommerce_safepay_init()
                 "beacon"         => $tracker,
                 "source"         => 'woocommerce',
                 "order_id"       => $order->get_id(),
+                "nonce"          => wp_create_nonce(self::WC_ORDER_ID),
                 "redirect_url"   => $this->get_redirect_url(),
-                "return_url"     => $this->get_return_url( $order ),
                 "cancel_url"     => $this->get_cancel_url( $order )
             );
 
@@ -342,14 +342,23 @@ function woocommerce_safepay_init()
         {
             global $woocommerce;
 
-            $order_id = $_POST["order_id"];
-            $signature = $_POST["sig"];
-            $reference_code = $_POST["reference"];
-            $tracker = $_POST["tracker"];
+            $order_id = sanitize_text_field($_POST["order_id"]);
+            $signature = sanitize_text_field($_POST["sig"]);
+            $reference_code = sanitize_text_field($_POST["reference"]);
+            $tracker = sanitize_text_field($_POST["tracker"]);
+            $nonce = sanitize_text_field($_POST["nonce"]);
             $success = false;
             $error = "";
-            
-            if (!isset($order_id) || !isset($signature))
+
+            if (empty($nonce))
+            {
+                $error = 'Required nonce not returned in request';
+            }
+            else if (!wp_verify_nonce($nonce, self::WC_ORDER_ID))
+            {
+                $error = 'Nonce failed security check.';
+            }
+            else if (!isset($order_id) || !isset($signature))
             {
                 $error = 'Payment to Safepay Failed. No data received';
             }

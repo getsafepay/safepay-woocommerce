@@ -26,8 +26,9 @@ function woocommerce_safepay_init()
 
     class WC_Safepay extends WC_Payment_Gateway
     {
-        const TRACKER_TOKEN               = "safepay_wc_tracker_token";
-        const SAFEPAY_TRANSACTION_TOKEN   = "safepay_transaction_token";
+        const TRACKER_TOKEN                   = "safepay_wc_tracker_token";
+        const SAFEPAY_TRANSACTION_TOKEN       = "safepay_transaction_token";
+        const SAFEPAY_TRANSACTION_REFERENCE   = "safepay_reference_code";
 
         const WC_ORDER_ID                 = "woocommerce_order_id";
 
@@ -425,9 +426,10 @@ function woocommerce_safepay_init()
 
             if (($success === true) and ($order->needs_payment() === true))
             {
-                $this->msg['message'] = $this->get_custom_order_creation_message() . "&nbsp; Order Id: $orderId";
+                $this->msg['message'] = $this->get_custom_order_creation_message() . "&nbsp; Order Id: $order_id";
                 $this->msg['class'] = 'success';
 
+                $order->update_meta_data(self::SAFEPAY_TRANSACTION_REFERENCE, $reference_code);
                 $order->payment_complete($reference_code);
                 $order->add_order_note("Safepay payment successful <br/>Safepay Reference Code: $reference_code");
 

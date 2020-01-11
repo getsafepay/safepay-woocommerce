@@ -3,7 +3,7 @@ Contributors: safepay
 Tags: safepay, payments, pakistan, woocommerce, ecommerce
 Requires at least: 3.9.2
 Tested up to: 5.2.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -36,6 +36,9 @@ This is the official Safepay Checkout plugin for WooCommerce. It allows you to a
 == Upgrade Notice ==
 
 == Changelog ==
+= 1.0.2 =
+* Added a fix for Woocommerce nonce checks
+
 = 1.0.1 =
 * Added reference code to order meta data.
 

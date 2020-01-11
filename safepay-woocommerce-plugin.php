@@ -321,12 +321,13 @@ function woocommerce_safepay_init()
         protected function construct_url($order, $tracker="")
         {
             $baseURL = $this->sandbox ? self::SANDBOX_CHECKOUT_URL : self::PRODUCTION_CHECKOUT_URL;
+            $order_id = $order->get_id();
             $params = array(
                 "env"            => $this->sandbox ? Safepay_API_Handler::$SANDBOX : Safepay_API_Handler::$PRODUCTION,
                 "beacon"         => $tracker,
                 "source"         => 'woocommerce',
-                "order_id"       => $order->get_id(),
-                "nonce"          => wp_create_nonce(self::WC_ORDER_ID),
+                "order_id"       => $order_id,
+                "nonce"          => wp_create_nonce(self::WC_ORDER_ID . $order_id),
                 "redirect_url"   => $this->get_redirect_url(),
                 "cancel_url"     => $this->get_cancel_url( $order )
             );
@@ -347,7 +348,7 @@ function woocommerce_safepay_init()
             $signature = sanitize_text_field($_POST["sig"]);
             $reference_code = sanitize_text_field($_POST["reference"]);
             $tracker = sanitize_text_field($_POST["tracker"]);
-            $nonce = sanitize_text_field($_POST["nonce"]);
+            $nonce = $_POST["nonce"];
             $success = false;
             $error = "";
 
@@ -355,7 +356,7 @@ function woocommerce_safepay_init()
             {
                 $error = 'Required nonce not returned in request';
             }
-            else if (!wp_verify_nonce($nonce, self::WC_ORDER_ID))
+            else if (!wp_verify_nonce($nonce, self::WC_ORDER_ID . $order_id))
             {
                 $error = 'Nonce failed security check.';
             }

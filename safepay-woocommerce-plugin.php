@@ -1,14 +1,15 @@
 <?php
 /*
- * Plugin Name: Safepay for WooCommerce
- * Plugin URI: https://getsafepay.com
- * Description: Safepay Payment Gateway Integration for WooCommerce
- * Version: 1.0.2
- * Stable tag: 1.0.2
- * Author: Team Safepay
- * WC tested up to: 3.7.1
- * Author URI: https://getsafepay.com
+  Plugin Name:  Safepay for WooCommerce
+  Plugin URI:   https://github.com/getsafepay/safepay-woocommerce
+  Description:  Safepay Payment Gateway Integration for WooCommerce.
+  Version:      1.0.3
+  Author:       Team Safepay
+  Author URI:   https://getsafepay.com
+  License:      GPL-2.0+
+  License URI:  http://www.gnu.org/licenses/gpl-2.0.txt
 */
+
 if ( ! defined( 'ABSPATH' ) )
 {
     exit; // Exit if accessed directly

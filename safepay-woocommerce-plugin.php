@@ -3,7 +3,7 @@
   Plugin Name:  Safepay for WooCommerce
   Plugin URI:   https://github.com/getsafepay/safepay-woocommerce
   Description:  Safepay Payment Gateway Integration for WooCommerce.
-  Version:      1.0.3
+  Version:      1.0.4
   Author:       Team Safepay
   Author URI:   https://getsafepay.com
   License:      GPL-2.0+
@@ -356,10 +356,6 @@ function woocommerce_safepay_init()
             if (empty($nonce))
             {
                 $error = 'Required nonce not returned in request';
-            }
-            else if (!wp_verify_nonce($nonce, self::WC_ORDER_ID . $order_id))
-            {
-                $error = 'Nonce failed security check.';
             }
             else if (!isset($order_id) || !isset($signature))
             {

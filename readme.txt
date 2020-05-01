@@ -36,6 +36,9 @@ This is the official Safepay Checkout plugin for WooCommerce. It allows you to a
 == Upgrade Notice ==
 
 == Changelog ==
+= 1.0.5 = 
+* Added a fix to use the correct named method on payment complete
+
 = 1.0.2 =
 * Added a fix for Woocommerce nonce checks
 
@@ -45,9 +48,6 @@ This is the official Safepay Checkout plugin for WooCommerce. It allows you to a
 = 1.0.0 = 
 * Redirects customer to payments page on clicking Place Order, as per WooCommerce guidelines.
 * Redirects customer to order details page, as per WooCommerce guidelines.
-
-= 1.0.5 = 
-* Added a fix to use the correct named method on payment complete
 
 == Frequently Asked Questions ==
 

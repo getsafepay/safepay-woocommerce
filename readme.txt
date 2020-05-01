@@ -3,7 +3,7 @@ Contributors: safepay
 Tags: safepay, payments, pakistan, woocommerce, ecommerce
 Requires at least: 3.9.2
 Tested up to: 5.2.4
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -45,6 +45,9 @@ This is the official Safepay Checkout plugin for WooCommerce. It allows you to a
 = 1.0.0 = 
 * Redirects customer to payments page on clicking Place Order, as per WooCommerce guidelines.
 * Redirects customer to order details page, as per WooCommerce guidelines.
+
+= 1.0.5 = 
+* Added a fix to use the correct named method on payment complete
 
 == Frequently Asked Questions ==
 

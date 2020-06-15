@@ -3,7 +3,7 @@
   Plugin Name:  Safepay for WooCommerce
   Plugin URI:   https://github.com/getsafepay/safepay-woocommerce
   Description:  Safepay Payment Gateway Integration for WooCommerce.
-  Version:      1.0.5
+  Version:      1.0.6
   Author:       Team Safepay
   Author URI:   https://getsafepay.com
   License:      GPL-2.0+
@@ -108,6 +108,9 @@ function woocommerce_safepay_init()
             'class'     =>  '',
         );
 
+        /** @var WC_Logger Logger instance */
+        public static $log = false;
+
 
         public function __construct()
         {
@@ -122,6 +125,21 @@ function woocommerce_safepay_init()
             $this->sandbox        = 'yes' === $this->get_option('sandbox_mode');
 
             $this->init_admin_options();
+        }
+
+        /**
+         * Logging method.
+         *
+         * @param string $message Log message.
+         * @param string $level   Optional. Default 'info'.
+         *     emergency|alert|critical|error|warning|notice|info|debug
+         */
+        public static function log( $message, $level = 'info' ) 
+        {
+            if ( empty( self::$log ) ) {
+                self::$log = wc_get_logger();
+            }
+            self::$log->log( $level, $message, array( 'source' => 'safepay' ) );
         }
 
         protected function init_hooks()
@@ -356,14 +374,17 @@ function woocommerce_safepay_init()
             if (empty($nonce))
             {
                 $error = 'Required nonce not returned in request';
+                self::log( 'Required nonce not returned in request' );
             }
             else if (!isset($order_id) || !isset($signature))
             {
                 $error = 'Payment to Safepay Failed. No data received';
+                self::log( 'Payment to Safepay Failed. No data received' );
             }
             else if ($this->validate_signature($tracker, $signature) === false)
             {
                 $error = 'Payment is invalid. Failed security check.';
+                self::log( 'Payment is invalid. Failed security check' );
             }
             else
             {
@@ -402,6 +423,8 @@ function woocommerce_safepay_init()
                 return true;
             }
 
+            self::log( 'signature: ' . $signature );
+            self::log( 'signature_2: ' . $signature_2 );
             return false;
         }
 

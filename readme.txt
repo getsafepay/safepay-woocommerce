@@ -2,7 +2,7 @@
 Contributors: safepay
 Tags: safepay, payments, pakistan, woocommerce, ecommerce
 Requires at least: 3.9.2
-Tested up to: 5.2.4
+Tested up to: 5.5
 Stable tag: 1.0.6
 Requires PHP: 5.6
 License: GPLv2 or later
